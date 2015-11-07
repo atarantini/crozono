@@ -276,9 +276,8 @@ def enable_mode_monitor(iface):
     proc = Popen(['iwconfig'], stdout=PIPE, stderr=DN)
 
     for line in proc.communicate()[0].split('\n'):
-        if line.find('Mode:Monitor') != -1:
-            iface_mon = line[:len(iface)+3]
-            return iface_mon.strip()
+        if "Mode:Monitor" in line:
+            return line.split()[0]
 
 def get_gateway():
     gateway = []
