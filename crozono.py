@@ -240,7 +240,10 @@ def scan_targets(iface_mon,essid_predefined):
                     APs_list.append([data[0],data[3],data[5],data[6],data[7],data[8],data[9],data[13]])
         #0:BSSID-0, 3:channel-1, 5:Privacy-2, 6:Cipher-3, 7:Auth-4, 8:Power-5, 9:Beacons-6, 13:ESSID-7
         csv.close()
-        APs_list = sorted(APs_list,key = lambda x: x[5]) #APs sorted by the nearest
+        APs_list = sorted(APs_list, key = lambda x: x[5]) #APs sorted by the nearest
+        if not APs_list:
+            print "  [x] No WiFi access points in range!"
+            exit()
 
         APs_nearest = []
         #Get the first two nearest APs:
