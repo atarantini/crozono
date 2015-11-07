@@ -321,10 +321,11 @@ def get_iface():
 
 
 def hardware_setup():
-    print("  [+] Setting the hardware configuration... (MAC address changed)")
+    print("  [+] Setting the hardware configuration...")
     iface = get_iface()
+    print("\t[+] Network interface: {}".format(iface))
     iface_mon = enable_mode_monitor(iface)
-    print "ifmon", iface_mon
+    print("\t[+] Monitor interface: {}".format(iface_mon))
     return iface_mon
 
 def banner():
