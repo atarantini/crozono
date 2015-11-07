@@ -303,10 +303,21 @@ def get_gateway():
 
 
 def get_iface():
+    # Get interfaces
+    interfaces = []
     proc = Popen(['airmon-ng'], stdout=PIPE, stderr=DN)
     for line in proc.communicate()[0].split('\n'):
         if "phy0" in line:
-            return line.split()[0]
+            interfaces.append(line.split()[0])
+
+    # Stop all running monitor interfaces
+    for iface in interfaces:
+        if "mon" in iface:
+            Popen(['airmon-ng', 'stop', iface], stdout=PIPE, stderr=DN)
+            interfaces.remove(iface)
+
+    # Return the last inferface available
+    return interfaces.pop()
 
 
 def hardware_setup():
