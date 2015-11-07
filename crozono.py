@@ -264,9 +264,9 @@ def scan_targets(iface_mon,essid_predefined):
     return target
 
 def mac_changer(iface_mon):
-    #call(['ifconfig', iface_mon, 'down'], stdout=DN, stderr=DN)
-    #call(['macchanger','-m','00:11:22:33:44:55', iface_mon], stdout=DN, stderr=DN)
-    #call(['ifconfig', iface_mon, 'up'], stdout=DN, stderr=DN)
+    call(['ifconfig', iface_mon, 'down'], stdout=DN, stderr=DN)
+    call(['macchanger','-m','00:11:22:33:44:55', iface_mon], stdout=DN, stderr=DN)
+    call(['ifconfig', iface_mon, 'up'], stdout=DN, stderr=DN)
 
     return '00:11:22:33:44:55'
 
@@ -374,7 +374,7 @@ def main():
             ap_target = scan_targets(iface_mon,essid_predefined)
     else:
         iface_mon = hardware_setup()
-        new_mac = mac_changer(iface_mon)
+        #new_mac = mac_changer(iface_mon)
         ap_target = scan_targets(iface_mon, '')
 
     if ap_target != False:
