@@ -308,9 +308,14 @@ def get_iface():
     # Get interfaces
     interfaces = []
     proc = Popen(['airmon-ng'], stdout=PIPE, stderr=DN)
-    for line in proc.communicate()[0].split('\n'):
+
+    airmon_output = proc.communicate()[0].split('\n')
+    airmon_columns_interface_position = 0
+    for line in airmon_output:
+        if "Interface" in line:
+            airmon_columns_interface_position = line.split().index("Interface")
         if "phy0" in line:
-            interfaces.append(line.split()[0])
+            interfaces.append(line.split()[airmon_columns_interface_position])
 
     # Stop all running monitor interfaces
     for iface in interfaces:
@@ -318,7 +323,7 @@ def get_iface():
             Popen(['airmon-ng', 'stop', iface], stdout=PIPE, stderr=DN)
             interfaces.remove(iface)
 
-    # Return the last inferface available
+    # Return the last interface available
     return interfaces.pop()
 
 
