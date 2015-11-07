@@ -377,7 +377,7 @@ def main():
             ip_lan = connect(essid_predefined,key_predefined,'')
         else:
             iface_mon = hardware_setup()
-            new_mac = mac_changer(iface_mon)
+            #new_mac = mac_changer(iface_mon)
             ap_target = scan_targets(iface_mon,essid_predefined)
     else:
         iface_mon = hardware_setup()
