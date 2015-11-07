@@ -320,7 +320,7 @@ def hardware_setup():
 	return iface_mon
 
 def banner():
-	print '''
+	print('''
 
        ____   ____     ___    _____   ___    _   _    ___  
       / ___| |  _ \   / _ \  |__  /  / _ \  | \ | |  / _ \ 
@@ -332,7 +332,7 @@ def banner():
 	   Software Development 
 	Pablo Romanos - @pabloromanos
 	   Hardware Implementation
-	'''
+	''')
 
 def main():
 	
@@ -494,4 +494,5 @@ def main():
 
 	print("  [+] CROZONO has finished! Good bye! ;)")
 	
-main()
+if __name__ == "__main__":
+    main()
